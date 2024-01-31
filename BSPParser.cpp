@@ -615,7 +615,12 @@ BSPMap::BSPMap(
 
 	if (!ParseGameLumps())
 	{
-		ThrowSafeError("Failed to parse game lumps", mpData);
+		// We don't have to error here but we do want to make sure to nullify anything
+		// related to the game lump data. Since it's game-specific, errors here are expected.
+
+		mNumStaticProps = 0;
+		mNumStaticPropLeaves = 0;
+		mNumStaticPropDictEntries = 0;
 	}
 
 	// TODO: Remove this and the validity system all together
