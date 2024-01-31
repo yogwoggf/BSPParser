@@ -511,7 +511,7 @@ BSPMap::BSPMap(
 {
 	if (pFileData == nullptr || dataSize == 0U) return;
 
-	mpData = reinterpret_cast<uint8_t*>(malloc(dataSize));
+	mpData = static_cast<uint8_t*>(malloc(dataSize));
 	if (mpData == nullptr) return;
 	memcpy(mpData, pFileData, dataSize);
 
