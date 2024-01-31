@@ -251,7 +251,7 @@ public:
 	 */
 	[[nodiscard]] const BSPStructs::Vector* GetVertices() const;
 
-	template<typename C, typename CPtr = std::add_pointer_t<C>>
+	template<typename C, typename CPtr = std::add_const_t<std::add_pointer_t<C>>>
 	[[nodiscard]] CPtr GetVertices()
 	{
 		static_assert(std::is_standard_layout_v<CPtr>, "C must be a standard layout type");
@@ -263,7 +263,7 @@ public:
 	 */
     [[nodiscard]] const BSPStructs::Vector* GetNormals() const;
 
-	template<typename C, typename CPtr = std::add_pointer_t<C>>
+	template<typename C, typename CPtr = std::add_const_t<std::add_pointer_t<C>>>
 	[[nodiscard]] CPtr GetNormals()
 	{
 		static_assert(std::is_standard_layout_v<CPtr>, "C must be a standard layout type");
