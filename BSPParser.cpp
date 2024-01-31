@@ -216,13 +216,13 @@ bool BSPMap::Triangulate()
 	if (mNumTris == 0U) return false;
 
 	// malloc buffers
-	mpPositions  = reinterpret_cast<Vector*>(malloc(sizeof(Vector) * 3U * mNumTris));
-	mpNormals    = reinterpret_cast<Vector*>(malloc(sizeof(Vector) * 3U * mNumTris));
-	mpTangents   = reinterpret_cast<Vector*>(malloc(sizeof(Vector) * 3U * mNumTris));
-	mpBinormals  = reinterpret_cast<Vector*>(malloc(sizeof(Vector) * 3U * mNumTris));
-	mpUVs        = reinterpret_cast<float*>(malloc(sizeof(float) * 2U * 3U * mNumTris));
-	mpAlphas     = reinterpret_cast<float*>(malloc(sizeof(float) * 3U * mNumTris));
-	mpTexIndices = reinterpret_cast<int16_t*>(malloc(sizeof(int16_t) * mNumTris));
+	mpPositions  = static_cast<Vector*>(malloc(sizeof(Vector) * 3U * mNumTris));
+	mpNormals    = static_cast<Vector*>(malloc(sizeof(Vector) * 3U * mNumTris));
+	mpTangents   = static_cast<Vector*>(malloc(sizeof(Vector) * 3U * mNumTris));
+	mpBinormals  = static_cast<Vector*>(malloc(sizeof(Vector) * 3U * mNumTris));
+	mpUVs        = static_cast<float*>(malloc(sizeof(float) * 2U * 3U * mNumTris));
+	mpAlphas     = static_cast<float*>(malloc(sizeof(float) * 3U * mNumTris));
+	mpTexIndices = static_cast<int16_t*>(malloc(sizeof(int16_t) * mNumTris));
 
 	if (
 		mpPositions  == nullptr ||
