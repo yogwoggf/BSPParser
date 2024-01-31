@@ -209,47 +209,85 @@ private:
 	bool Triangulate();
 
 public:
-	// Parses and triangulates a BSP from raw data
-	// clockwise sets which winding the triangles should have (default true)
+	/**
+	 * \brief Parses and triangulates a BSP from raw data
+	 * \param pFileData Pointer to the loaded BSP file in memory
+	 * \param dataSize Size of the loaded BSP file in memory
+	 * \param clockwise Whether to create CW tris or CCW tris
+	 */
 	BSPMap(const uint8_t* pFileData, size_t dataSize, bool clockwise = true);
 	~BSPMap();
 
-	// Returns whether the BSP was loaded correctly
+	/**
+	 * \brief Checks if the BSP was parsed successfully
+	 * \return Whether the BSP was parsed successfully
+	 */
 	[[nodiscard]] bool IsValid() const;
 
-	// Gets th enumber of textures defined in the map
+	/**
+	 * \return The number of textures loaded in the BSP
+	 */
 	[[nodiscard]] size_t GetNumTextures() const;
 
-	// Returns relevant texture information for an index in the TexInfo lump
+	/**
+	 * \param index Index of the texture to get
+	 * \return The BSPTexture associated with the given index
+	 */
 	[[nodiscard]] BSPTexture GetTexture(int16_t index) const;
 
-	// Gets the number of triangles in the triangulated BSP data
-    [[nodiscard]] size_t GetNumTris() const;
+	/**
+	 * \return The number of triangles in the triangulated BSP data
+	 */
+	[[nodiscard]] size_t GetNumTris() const;
 
-	// Gets the number of vertices in the triangulated BSP data
+	/**
+	 * \return The number of vertices in the triangulated BSP data
+	 */
 	[[nodiscard]] size_t GetNumVertices() const;
 
-	// Returns a const pointer to the vertex positions as Vector structs (castable to floats)
-    [[nodiscard]] const BSPStructs::Vector* GetVertices() const;
+	/**
+	 * \return Returns a pointer to the list of vertices in the BSP (castable to floats)
+	 */
+	[[nodiscard]] const BSPStructs::Vector* GetVertices() const;
 
-	// Returns a const pointer to the vertex normals as Vector structs (castable to floats)
+	/**
+	 * \return Returns a pointer to the list of normals in the BSP (castable to floats)
+	 */
     [[nodiscard]] const BSPStructs::Vector* GetNormals() const;
 
-	// Returns a const pointer to the vertex tangents as Vector structs (castable to floats)
+	/**
+	 * \return Returns a pointer to the list of tangents in the BSP (castable to floats)
+	 */
     [[nodiscard]] const BSPStructs::Vector* GetTangents() const;
 
-	// Returns a const pointer to the vertex binormals as Vector structs (castable to floats)
+	/**
+	 * \return Returns a pointer to the list of binormals in the BSP (castable to floats)
+	 */
     [[nodiscard]] const BSPStructs::Vector* GetBinormals() const;
 
-	// Returns a const pointer to the vertex UVs as raw float data
+	/**
+	 * \return Returns a pointer to the list of UVs in the BSP (these are 2-component vectors)
+	 */
     [[nodiscard]] const float* GetUVs() const;
 
-	// Returns a const pointer to the vertex alphas as floats
+	/**
+	 * \return Returns a pointer to the list of alpha values in the BSP
+	 */
     [[nodiscard]] const float* GetAlphas() const;
 
-	// Returns a const pointer to the triangle TexInfo indices as an array of int16_t
-    [[nodiscard]] const int16_t* GetTriTextures() const;
+	/**
+	 * \return Returns a pointer to a list of 16-bit integer indices used to index into the TexInfo lump.
+	 */
+	[[nodiscard]] const int16_t* GetTriTextures() const;
 
-    [[nodiscard]] int32_t GetNumStaticProps() const;
+	/**
+	 * \return Returns the number of static props in the BSP
+	 */
+	[[nodiscard]] int32_t GetNumStaticProps() const;
+
+	/**
+	 * \param index The index of the static prop requested
+	 * \return Returns a BSPStaticProp associated with the given index
+	 */
     [[nodiscard]] BSPStaticProp GetStaticProp(int32_t index) const;
 };
