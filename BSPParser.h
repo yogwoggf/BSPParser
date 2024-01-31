@@ -214,6 +214,7 @@ public:
 	 * \param pFileData Pointer to the loaded BSP file in memory
 	 * \param dataSize Size of the loaded BSP file in memory
 	 * \param clockwise Whether to create CW tris or CCW tris
+	 * \throw std::runtime_error A runtime exception containing a friendly user-facing message about what specifically went wrong during instantation.
 	 */
 	BSPMap(const uint8_t* pFileData, size_t dataSize, bool clockwise = true);
 	~BSPMap();
