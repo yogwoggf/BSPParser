@@ -63,29 +63,30 @@ bool BSPMap::ParseGameLumps()
 
 	for (int i = 0; i < mNumGameLumps; i++) {
 		switch (mpGameLumps[i].id) {
-		case GameLumpID::DETAIL_PROPS:
-			break;
-		case GameLumpID::STATIC_PROPS: {
-			mStaticPropsVersion = mpGameLumps[i].version;
+			case GameLumpID::DETAIL_PROPS:
+				break;
+			case GameLumpID::STATIC_PROPS: {
+					mNumStaticProps++;
+				mStaticPropsVersion = mpGameLumps[i].version;
 
-			switch (mStaticPropsVersion) {
-			case 4:
-				if (!ParseStaticPropLump(mpGameLumps[i], &mpStaticPropsV4)) return false;
+				switch (mStaticPropsVersion) {
+				case 4:
+					if (!ParseStaticPropLump(mpGameLumps[i], &mpStaticPropsV4)) return false;
+					break;
+				case 5:
+					if (!ParseStaticPropLump(mpGameLumps[i], &mpStaticPropsV5)) return false;
+					break;
+				case 6:
+					if (!ParseStaticPropLump(mpGameLumps[i], &mpStaticPropsV6)) return false;
+					break;
+				default:
+					return false;
+				}
+
 				break;
-			case 5:
-				if (!ParseStaticPropLump(mpGameLumps[i], &mpStaticPropsV5)) return false;
+			} default:
 				break;
-			case 6:
-				if (!ParseStaticPropLump(mpGameLumps[i], &mpStaticPropsV6)) return false;
-				break;
-			default:
-				return false;
 			}
-
-			break;
-		} default:
-			break;
-		}
 	}
 
 	return true;
