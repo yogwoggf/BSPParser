@@ -2,10 +2,12 @@
 
 #include "FileFormat/Structs.h"
 #include "Displacements/Displacements.h"
+#include "Utility/ErrorHandling.h"
 
 #include <cstdlib>
 #include <cmath>
 #include <cstring>
+#include <format>
 #include <stdexcept>
 #include <limits>
 
@@ -509,55 +511,119 @@ BSPMap::BSPMap(
 	const uint8_t* const pFileData, const size_t dataSize, const bool clockwise
 ) : mDataSize(dataSize), mClockwise(clockwise)
 {
+	using BSPParser::Utility::ThrowSafeError;
+
 	if (pFileData == nullptr || dataSize == 0U) return;
 
 	mpData = static_cast<uint8_t*>(malloc(dataSize));
-	if (mpData == nullptr) return;
+	if (mpData == nullptr)
+	{
+		throw std::runtime_error("Failed to allocate enough memory for the copy of the passed map data");
+	}
+
 	memcpy(mpData, pFileData, dataSize);
 
-	if (
-		!BSPParser::ParseHeader(mpData, dataSize, &mpHeader) ||
-		mpHeader->version < 19 || mpHeader->version > 21 ||
-		!BSPParser::ParseArray(
+	if (!BSPParser::ParseHeader(mpData, dataSize, &mpHeader))
+	{
+		ThrowSafeError("Failed to parse BSP header", mpData);
+	}
+
+	if (mpHeader->version < 19 || mpHeader->version > 21)
+	{
+		ThrowSafeError(std::format("Unsupported BSP version detected (expected within range 19-21, received {})", mpHeader->version), mpData);
+	}
+
+	if (!BSPParser::ParseArray(
 			mpData, dataSize,
 			mpHeader,
 			&mpVertices, &mNumVertices,
 			LUMP::VERTICES, MAX_MAP_VERTS
-		) ||
-		!ParseLump(&mpPlanes, &mNumPlanes) ||
-		!ParseLump(&mpEdges, &mNumEdges) ||
-		!BSPParser::ParseArray(
+		))
+	{
+		ThrowSafeError("Failed to parse vertices", mpData);
+	}
+
+	if (!ParseLump(&mpPlanes, &mNumPlanes))
+	{
+		ThrowSafeError("Failed to parse planes", mpData);
+	}
+
+	if (!ParseLump(&mpEdges, &mNumEdges))
+	{
+		ThrowSafeError("Failed to parse edges", mpData);
+	}
+
+	if (!BSPParser::ParseArray(
 			mpData, dataSize,
 			mpHeader,
 			&mpSurfEdges, &mNumSurfEdges,
 			LUMP::SURFEDGES, MAX_MAP_SURFEDGES
-		) ||
-		!ParseLump(&mpFaces, &mNumFaces) ||
-		!ParseLump(&mpTexInfos, &mNumTexInfos) ||
-		!ParseLump(&mpTexDatas, &mNumTexDatas) ||
-		!BSPParser::ParseArray(
+		))
+	{
+		ThrowSafeError("Failed to parse surfedges", mpData);
+	}
+
+	if (!ParseLump(&mpFaces, &mNumFaces))
+	{
+		ThrowSafeError("Failed to parse faces", mpData);
+	}
+
+	if (!ParseLump(&mpTexInfos, &mNumTexInfos))
+	{
+		ThrowSafeError("Failed to parse tex infos", mpData);
+	}
+
+	if (!ParseLump(&mpTexDatas, &mNumTexDatas))
+	{
+		ThrowSafeError("Failed to parse tex datas", mpData);
+	}
+
+	if (!BSPParser::ParseArray(
 			mpData, dataSize,
 			mpHeader,
 			&mpTexDataStringTable, &mNumTexDataStringTableEntries,
 			LUMP::TEXDATA_STRING_TABLE, MAX_MAP_TEXDATA_STRING_TABLE
-		) ||
-		!BSPParser::ParseArray(
+		))
+	{
+		ThrowSafeError("Failed to parse the tex data string table", mpData);
+	}
+
+	if (!BSPParser::ParseArray(
 			mpData, dataSize,
 			mpHeader,
 			&mpTexDataStringData, &mNumTexDataStringDatas,
 			LUMP::TEXDATA_STRING_DATA, MAX_MAP_TEXDATA_STRING_DATA
-		) ||
-		!ParseLump(&mpModels, &mNumModels) ||
-		!ParseLump(&mpDispInfos, &mNumDispInfos) ||
-		!ParseLump(&mpDispVerts, &mNumDispVerts) ||
-		!ParseGameLumps()
-	) {
-		free(mpData);
-		mpData = nullptr;
-		return;
+		))
+	{
+		ThrowSafeError("Failed to parse the tex data string data", mpData);
 	}
 
-	if (Triangulate()) mIsValid = true;
+	if (!ParseLump(&mpModels, &mNumModels))
+	{
+		ThrowSafeError("Failed to parse models", mpData);
+	}
+
+	if (!ParseLump(&mpDispInfos, &mNumDispInfos))
+	{
+		ThrowSafeError("Failed to parse displacement infos", mpData);
+	}
+
+	if (!ParseLump(&mpDispVerts, &mNumDispVerts))
+	{
+		ThrowSafeError("Failed to parse displacement vertices", mpData);
+	}
+
+	if (!ParseGameLumps())
+	{
+		ThrowSafeError("Failed to parse game lumps", mpData);
+	}
+
+	// TODO: Remove this and the validity system all together
+	mIsValid = true;
+	if (!Triangulate())
+	{
+		ThrowSafeError("Failed to triangulate BSP", mpData);
+	}
 }
 
 BSPMap::~BSPMap()
