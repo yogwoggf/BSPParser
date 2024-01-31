@@ -251,10 +251,24 @@ public:
 	 */
 	[[nodiscard]] const BSPStructs::Vector* GetVertices() const;
 
+	template<typename C, typename CPtr = std::add_pointer_t<C>>
+	[[nodiscard]] CPtr GetVertices()
+	{
+		static_assert(std::is_standard_layout_v<CPtr>, "C must be a standard layout type");
+		return reinterpret_cast<CPtr>(GetVertices());
+	}
+
 	/**
 	 * \return Returns a pointer to the list of normals in the BSP (castable to floats)
 	 */
     [[nodiscard]] const BSPStructs::Vector* GetNormals() const;
+
+	template<typename C, typename CPtr = std::add_pointer_t<C>>
+	[[nodiscard]] CPtr GetNormals()
+	{
+		static_assert(std::is_standard_layout_v<CPtr>, "C must be a standard layout type");
+		return reinterpret_cast<CPtr>(GetNormals());
+	}
 
 	/**
 	 * \return Returns a pointer to the list of tangents in the BSP (castable to floats)
