@@ -242,7 +242,6 @@ bool BSPMap::Triangulate()
 	for (int dispIdx = 0; dispIdx < mNumDispInfos; dispIdx++) {
 		const DispInfo* pDispInfo = mpDispInfos + dispIdx;
 		const Face* pFace = mpFaces + pDispInfo->mapFace;
-		int32_t size = 1 << pDispInfo->power;
 
 		Vector corners[4];
 		int32_t firstCorner = 0;
@@ -283,9 +282,9 @@ bool BSPMap::Triangulate()
 		Displacement& disp = displacements[dispIdx];
 		disp.Init(pDispInfo);
 
-		Displacements::GenerateDispSurf(pDispInfo, mpDispVerts + pDispInfo->dispVertStart, corners, disp);
-		Displacements::GenerateDispSurfNormals(pDispInfo, disp);
-		Displacements::GenerateDispSurfTangentSpaces(
+		GenerateDispSurf(pDispInfo, mpDispVerts + pDispInfo->dispVertStart, corners, disp);
+		GenerateDispSurfNormals(pDispInfo, disp);
+		GenerateDispSurfTangentSpaces(
 			pDispInfo, mpPlanes + pFace->planeNum,
 			mpTexInfos + pFace->texInfo,
 			disp
@@ -296,11 +295,11 @@ bool BSPMap::Triangulate()
 			CalcUVs(pFace->texInfo, corners + i, faceUVs[i]);
 		}
 
-		Displacements::GenerateDispSurfUVs(pDispInfo, faceUVs, disp);
+		GenerateDispSurfUVs(pDispInfo, faceUVs, disp);
 	}
 
 	try {
-		Displacements::SmoothNeighbouringDispSurfNormals(displacements);
+		SmoothNeighbouringDispSurfNormals(displacements);
 	} catch (const std::out_of_range& e) {
 		FreeAll();
 		return false;
