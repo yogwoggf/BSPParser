@@ -10,8 +10,15 @@ namespace BSPStructs
 	// Max # of neighboring displacement touching a displacement's corner.
 	constexpr size_t MAX_DISP_CORNER_NEIGHBORS = 4;
 
-	#define NUM_DISP_POWER_VERTS(power)	(((1 << (power)) + 1) * ((1 << (power)) + 1))
-	#define NUM_DISP_POWER_TRIS(power)	((1 << (power)) * (1 << (power)) * 2)
+	consteval size_t GetDispPowerVerts(size_t power)
+	{
+		return ((1 << power) + 1) * ((1 << power) + 1);
+	}
+
+	consteval size_t GetDispPowerTris(size_t power)
+	{
+		return ((1 << power) + 1) * ((1 << power) + 1);
+	}
 
 	constexpr size_t MAX_MAP_MODELS               = 1024;
 	constexpr size_t MAX_MAP_BRUSHES              = 8192;
@@ -21,8 +28,8 @@ namespace BSPStructs
 	constexpr size_t MAX_MAP_DISPINFO             = 2048;
 	constexpr size_t MAX_MAP_DISP_VERTS           = MAX_MAP_DISPINFO * ((1 << MAX_MAP_DISP_POWER) + 1) * ((1 << MAX_MAP_DISP_POWER) + 1);
 	constexpr size_t MAX_MAP_DISP_TRIS            = (1 << MAX_MAP_DISP_POWER) * (1 << MAX_MAP_DISP_POWER) * 2;
-	constexpr size_t MAX_DISPVERTS                = NUM_DISP_POWER_VERTS(MAX_MAP_DISP_POWER);
-	constexpr size_t MAX_DISPTRIS                 = NUM_DISP_POWER_TRIS(MAX_MAP_DISP_POWER);
+	constexpr size_t MAX_DISPVERTS                = GetDispPowerVerts(MAX_MAP_DISP_POWER);
+	constexpr size_t MAX_DISPTRIS                 = GetDispPowerTris(MAX_MAP_DISP_POWER);
 	constexpr size_t MAX_MAP_AREAS                = 256;
 	constexpr size_t MAX_MAP_AREA_BYTES           = MAX_MAP_AREAS / 8;
 	constexpr size_t MAX_MAP_AREAPORTALS          = 1024;
@@ -57,7 +64,4 @@ namespace BSPStructs
 
 	constexpr uint8_t DETAIL_NAME_LENGTH = 128;
 	constexpr uint8_t STATIC_PROP_NAME_LENGTH = 128;
-
-	#undef NUM_DISP_POWER_VERTS
-	#undef NUM_DISP_POWER_TRIS
 }
